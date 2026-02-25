@@ -30,6 +30,7 @@ pub mod mattermost;
 pub mod nextcloud_talk;
 pub mod nostr;
 pub mod qq;
+pub mod sidekickz;
 pub mod signal;
 pub mod slack;
 pub mod telegram;
@@ -41,6 +42,7 @@ pub mod whatsapp;
 pub mod whatsapp_storage;
 #[cfg(feature = "whatsapp-web")]
 pub mod whatsapp_web;
+
 
 pub use clawdtalk::{ClawdTalkChannel, ClawdTalkConfig};
 pub use cli::CliChannel;
