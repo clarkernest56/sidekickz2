@@ -4392,13 +4392,20 @@ impl Config {
     /// Apply environment variable overrides to config
     pub fn apply_env_overrides(&mut self) {
         // Telegram Bot Token (from Environment variables)
-        if let Ok(token) = std::env::var("TELEGRAM_BOT_TOKEN") {
+        if let Ok(raw_token) = std::env::var("TELEGRAM_BOT_TOKEN") {
+            let token = raw_token.trim().to_string();
             if !token.is_empty() {
+                let obf = if token.len() > 10 {
+                    format!("{}...", &token[..7])
+                } else {
+                    "[INVALID_LENGTH]".to_string()
+                };
+                tracing::warn!("Injected TELEGRAM_BOT_TOKEN from environment. Preview: {}", obf);
                 if let Some(ref mut tg) = self.channels_config.telegram {
-                    tg.bot_token = token;
+                    tg.bot_token = token.clone();
                 } else {
                     self.channels_config.telegram = Some(TelegramConfig {
-                        bot_token: token,
+                        bot_token: token.clone(),
                         allowed_users: vec![],
                         stream_mode: StreamMode::default(),
                         draft_update_interval_ms: 1000,
