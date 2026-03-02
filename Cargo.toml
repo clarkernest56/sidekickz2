@@ -32,7 +32,7 @@ reqwest = { version = "0.12", default-features = false, features = ["json", "rus
 matrix-sdk = { version = "0.16", optional = true, default-features = false, features = ["e2e-encryption", "rustls-tls", "markdown", "sqlite"] }
 
 # Telegram client
-teloxide = { version = "0.13", features = ["macros", "rustls"] }
+teloxide = { version = "0.13", default-features = false, features = ["macros", "rustls"] }
 
 # Serialization
 serde = { version = "1.0", default-features = false, features = ["derive"] }
