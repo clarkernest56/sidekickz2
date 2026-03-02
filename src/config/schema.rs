@@ -4391,6 +4391,24 @@ impl Config {
 
     /// Apply environment variable overrides to config
     pub fn apply_env_overrides(&mut self) {
+        // Telegram Bot Token (from Environment variables)
+        if let Ok(token) = std::env::var("TELEGRAM_BOT_TOKEN") {
+            if !token.is_empty() {
+                if let Some(ref mut tg) = self.channels_config.telegram {
+                    tg.bot_token = token;
+                } else {
+                    self.channels_config.telegram = Some(TelegramConfig {
+                        bot_token: token,
+                        allowed_users: vec![],
+                        stream_mode: StreamMode::default(),
+                        draft_update_interval_ms: 1000,
+                        interrupt_on_new_message: false,
+                        mention_only: false,
+                    });
+                }
+            }
+        }
+
         // API Key: ZEROCLAW_API_KEY or API_KEY (generic)
         if let Ok(key) = std::env::var("ZEROCLAW_API_KEY").or_else(|_| std::env::var("API_KEY")) {
             if !key.is_empty() {
