@@ -9,7 +9,7 @@ WORKDIR /app
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y \
-        pkg-config \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # 1. Copy manifests to cache dependencies
@@ -35,19 +35,19 @@ COPY web/ web/
 # Keep release builds resilient when frontend dist assets are not prebuilt in Git.
 RUN mkdir -p web/dist && \
     if [ ! -f web/dist/index.html ]; then \
-      printf '%s\n' \
-        '<!doctype html>' \
-        '<html lang="en">' \
-        '  <head>' \
-        '    <meta charset="utf-8" />' \
-        '    <meta name="viewport" content="width=device-width,initial-scale=1" />' \
-        '    <title>ZeroClaw Dashboard</title>' \
-        '  </head>' \
-        '  <body>' \
-        '    <h1>ZeroClaw Dashboard Unavailable</h1>' \
-        '    <p>Frontend assets are not bundled in this build. Build the web UI to populate <code>web/dist</code>.</p>' \
-        '  </body>' \
-        '</html>' > web/dist/index.html; \
+    printf '%s\n' \
+    '<!doctype html>' \
+    '<html lang="en">' \
+    '  <head>' \
+    '    <meta charset="utf-8" />' \
+    '    <meta name="viewport" content="width=device-width,initial-scale=1" />' \
+    '    <title>ZeroClaw Dashboard</title>' \
+    '  </head>' \
+    '  <body>' \
+    '    <h1>ZeroClaw Dashboard Unavailable</h1>' \
+    '    <p>Frontend assets are not bundled in this build. Build the web UI to populate <code>web/dist</code>.</p>' \
+    '  </body>' \
+    '</html>' > web/dist/index.html; \
     fi
 RUN --mount=type=cache,id=zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
     --mount=type=cache,id=zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
@@ -120,6 +120,11 @@ ENV HOME=/zeroclaw-data
 # so config file edits are not silently overridden
 #ENV PROVIDER=
 ENV ZEROCLAW_GATEWAY_PORT=42617
+
+# Memory Optimizations for 1GB RAM (e2-micro) GCP instance
+ENV MALLOC_ARENA_MAX=2
+ENV TOKIO_WORKER_THREADS=2
+
 
 # API_KEY must be provided at runtime!
 
