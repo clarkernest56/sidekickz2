@@ -20,9 +20,7 @@ RUN mkdir -p src benches crates/robot-kit/src \
     && echo "fn main() {}" > src/main.rs \
     && echo "fn main() {}" > benches/agent_benchmarks.rs \
     && echo "pub fn placeholder() {}" > crates/robot-kit/src/lib.rs
-RUN --mount=type=cache,id=zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
-    --mount=type=cache,id=zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
-    --mount=type=cache,id=zeroclaw-target,target=/app/target,sharing=locked \
+RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/registry \
     cargo build --release --jobs 1
 RUN rm -rf src benches crates/robot-kit/src
 
@@ -49,9 +47,7 @@ RUN mkdir -p web/dist && \
     '  </body>' \
     '</html>' > web/dist/index.html; \
     fi
-RUN --mount=type=cache,id=zeroclaw-cargo-registry,target=/usr/local/cargo/registry,sharing=locked \
-    --mount=type=cache,id=zeroclaw-cargo-git,target=/usr/local/cargo/git,sharing=locked \
-    --mount=type=cache,id=zeroclaw-target,target=/app/target,sharing=locked \
+RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/registry \
     cargo build --release --jobs 1 && \
     cp target/release/zeroclaw /app/zeroclaw && \
     strip /app/zeroclaw
