@@ -20,8 +20,7 @@ RUN mkdir -p src benches crates/robot-kit/src \
     && echo "fn main() {}" > src/main.rs \
     && echo "fn main() {}" > benches/agent_benchmarks.rs \
     && echo "pub fn placeholder() {}" > crates/robot-kit/src/lib.rs
-RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/registry \
-    cargo build --release --jobs 1
+RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/registry cargo build --release
 RUN rm -rf src benches crates/robot-kit/src
 
 # 2. Copy only build-relevant source paths (avoid cache-busting on docs/tests/scripts)
@@ -47,8 +46,7 @@ RUN mkdir -p web/dist && \
     '  </body>' \
     '</html>' > web/dist/index.html; \
     fi
-RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/registry \
-    cargo build --release --jobs 1 && \
+RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/registry cargo build --release && \
     cp target/release/zeroclaw /app/zeroclaw && \
     strip /app/zeroclaw
 
@@ -65,7 +63,7 @@ default_temperature = 0.7
 
 [gateway]
 port = 42617
-host = "[::]"
+host = "0.0.0.0"
 allow_public_bind = true
 EOF
 
@@ -92,7 +90,6 @@ ENV HOME=/zeroclaw-data
 # Defaults for local dev (Ollama) - matches config.template.toml
 ENV PROVIDER="ollama"
 ENV ZEROCLAW_MODEL="llama3.2"
-ENV ZEROCLAW_GATEWAY_PORT=42617
 
 # Note: API_KEY is intentionally NOT set here to avoid confusion.
 # It is set in config.toml as the Ollama URL.
@@ -115,7 +112,6 @@ ENV HOME=/zeroclaw-data
 # Default provider and model are set in config.toml, not here,
 # so config file edits are not silently overridden
 #ENV PROVIDER=
-ENV ZEROCLAW_GATEWAY_PORT=42617
 
 # Memory Optimizations for 1GB RAM (e2-micro) GCP instance
 ENV MALLOC_ARENA_MAX=2
