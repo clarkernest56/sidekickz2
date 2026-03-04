@@ -29,6 +29,7 @@ COPY benches/ benches/
 COPY crates/ crates/
 COPY firmware/ firmware/
 COPY web/ web/
+RUN chown -R 1000:1000 /app
 # Keep release builds resilient when frontend dist assets are not prebuilt in Git.
 RUN mkdir -p web/dist && \
     if [ ! -f web/dist/index.html ]; then \
@@ -59,7 +60,7 @@ workspace_dir = "/zeroclaw-data/workspace"
 config_path = "/zeroclaw-data/.zeroclaw/config.toml"
 api_key = ""
 default_provider = "openrouter"
-default_model = "anthropic/claude-sonnet-4-20250514"
+default_model = "google/gemini-2.0-flash-001"
 default_temperature = 0.7
 
 [gateway]
