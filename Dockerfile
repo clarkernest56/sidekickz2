@@ -53,6 +53,7 @@ RUN --mount=type=cache,id=s/sidekickz2-cargo-registry,target=/usr/local/cargo/re
 # Prepare runtime directory structure and default config inline (no extra stage)
 RUN mkdir -p /zeroclaw-data/.zeroclaw /zeroclaw-data/workspace && \
     cat > /zeroclaw-data/.zeroclaw/config.toml <<EOF && \
+    chmod -R 777 /zeroclaw-data && \
     chown -R 65534:65534 /zeroclaw-data
 workspace_dir = "/zeroclaw-data/workspace"
 config_path = "/zeroclaw-data/.zeroclaw/config.toml"
@@ -104,7 +105,7 @@ CMD ["daemon"]
 FROM gcr.io/distroless/cc-debian13:nonroot@sha256:84fcd3c223b144b0cb6edc5ecc75641819842a9679a3a58fd6294bec47532bf7 AS release
 
 COPY --from=builder /app/zeroclaw /usr/local/bin/zeroclaw
-COPY --from=builder /zeroclaw-data /zeroclaw-data
+COPY --chown=65534:65534 --from=builder /zeroclaw-data /zeroclaw-data
 
 # Environment setup
 ENV ZEROCLAW_WORKSPACE=/zeroclaw-data/workspace
