@@ -2459,6 +2459,15 @@ impl Channel for TelegramChannel {
 
         tracing::info!("Telegram channel listening for messages...");
 
+        // Ensure no conflicting webhooks are active before long-polling
+        let delete_webhook_url = self.api_url("deleteWebhook");
+        let drop_pending_body = serde_json::json!({
+            "drop_pending_updates": false
+        });
+        if let Err(e) = self.http_client().post(&delete_webhook_url).json(&drop_pending_body).send().await {
+            tracing::warn!("Failed to delete Telegram webhook (non-fatal): {e}");
+        }
+
         // Startup probe: claim the getUpdates slot before entering the long-poll loop.
         // A previous daemon's 30-second poll may still be active on Telegram's server.
         // We retry with timeout=0 until we receive a successful (non-409) response,
